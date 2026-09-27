@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Just Panel It — Trade-Only Fabrication for Sign Manufacturers</title>
+<style>
+:root{
+  --bg:#F9F9F8; --ink:#0D0D0D; --grid:#E2E2E2; --red:#FF2E00; --nav-bg:rgba(249,249,248,0.85);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+:root:not([data-theme="light"]){ }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --bg:#F9F9F8; --ink:#0D0D0D; --grid:#E2E2E2; --red:#FF2E00; --nav-bg:rgba(249,249,248,0.85); }
+}
+:root[data-theme="dark"]{ --bg:#F9F9F8; --ink:#0D0D0D; --grid:#E2E2E2; --red:#FF2E00; --nav-bg:rgba(249,249,248,0.85); }
+html{scroll-padding-top:env(safe-area-inset-top,0px); scroll-behavior:smooth;}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{background:var(--bg); color:var(--ink); font-family:'Helvetica Neue',Arial,sans-serif; overflow-x:hidden;}
+.mono{font-family:'Courier New',ui-monospace,monospace; text-transform:uppercase; letter-spacing:0.08em; font-size:12px;}
+.wrap{max-width:1440px; margin:0 auto; position:relative;}
+.grid-border{border-left:1px solid var(--grid); border-right:1px solid var(--grid);}
+.cross{position:absolute; font-size:14px; color:var(--grid); line-height:0;}
+h1,h2,h3{font-weight:800; text-transform:uppercase; letter-spacing:-0.01em; line-height:1.05;}
+a{color:inherit; text-decoration:none;}
+.btn{display:inline-flex; align-items:center; gap:8px; font-family:'Courier New',monospace; text-transform:uppercase; font-size:12px; letter-spacing:0.08em; padding:14px 24px; border-radius:20px; cursor:pointer; border:1px solid var(--ink); background:none;}
+.btn-solid{background:var(--ink); color:var(--bg); border:none;}
+.btn-solid:hover{background:var(--red);}
+.btn:hover{border-color:var(--red); color:var(--red);}
+.section{padding:100px 40px; border-bottom:1px solid var(--grid); position:relative;}
+.section-label{font-family:'Courier New',monospace; text-transform:uppercase; font-size:12px; letter-spacing:0.08em; color:var(--red); margin-bottom:20px;}
+.mod-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--grid); border:1px solid var(--grid); margin-top:40px;}
+.mod{background:var(--bg); padding:28px;}
+.mod .num{font-family:'Courier New',monospace; font-size:11px; color:var(--red); display:block; margin-bottom:10px;}
+.mod h4{font-size:15px; margin-bottom:8px;}
+.mod p{font-size:13px; line-height:1.5; color:#333;}
+.two-col{display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:start;}
+@media (max-width:900px){ .two-col{grid-template-columns:1fr;} .mod-grid{grid-template-columns:1fr;} }
+
+/* NAV */
+nav{position:fixed; top:24px; left:50%; transform:translateX(-50%); width:calc(100% - 32px); max-width:800px; height:52px; border-radius:32px; z-index:1000; display:flex; align-items:center; justify-content:space-between; padding:8px 16px; background:transparent; transition:background .3s, backdrop-filter .3s; backdrop-filter:blur(0px);}
+nav.scrolled{background:var(--nav-bg); backdrop-filter:blur(8px); box-shadow:0 1px 8px rgba(0,0,0,0.06);}
+.brand-pill{font-family:'Courier New',monospace; font-weight:700; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; padding:8px 14px; border:1px solid var(--ink); border-radius:20px;}
+.nav-links{display:flex; gap:22px;}
+.nav-links a{font-family:'Courier New',monospace; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; border-bottom:2px solid transparent; padding-bottom:2px;}
+.nav-links a:hover{color:var(--red); border-color:var(--red);}
+.nav-cta{font-family:'Courier New',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; background:var(--ink); color:var(--bg); padding:10px 16px; border-radius:20px;}
+@media (max-width:700px){ .nav-links{display:none;} }
+
+/* HERO */
+.hero{min-height:100vh; padding:140px 40px 60px; display:flex; flex-direction:column; justify-content:center; position:relative;}
+.hero h1{font-size:clamp(32px,6vw,68px); max-width:900px;}
+.hero .sub{max-width:520px; font-size:15px; line-height:1.6; margin-top:24px; color:#333;}
+.hero .ctas{display:flex; gap:16px; margin-top:36px; flex-wrap:wrap;}
+.meta-row{display:flex; flex-wrap:wrap; gap:24px; margin-top:60px;}
+.meta-row span{font-family:'Courier New',monospace; font-size:11px; letter-spacing:0.08em; color:#555; border-left:2px solid var(--red); padding-left:8px;}
+.value-module{position:absolute; right:40px; bottom:60px; max-width:340px; border:1px solid var(--ink); padding:24px; background:var(--bg);}
+.value-module h3{font-size:18px; margin-bottom:12px;}
+.value-module p{font-size:13px; line-height:1.5; margin-bottom:18px; color:#333;}
+@media (max-width:900px){ .value-module{position:static; margin-top:50px; max-width:100%;} }
+
+/* SVG tech drawing */
+.tech-svg{width:100%; height:auto; margin-top:50px; max-width:700px;}
+.elevation-wrap{position:relative; max-width:640px; margin:50px auto 0;}
+.elevation-wrap svg{width:100%; height:auto; display:block;}
+.node{position:absolute; width:14px; height:14px; border-radius:50%; background:var(--red); cursor:pointer; transform:translate(-50%,-50%);}
+.node::after{content:''; position:absolute; inset:-6px; border-radius:50%; border:1px solid var(--red); opacity:0; animation:pulse 2.4s ease-out infinite;}
+@keyframes pulse{0%{opacity:.6; transform:scale(0.6);} 100%{opacity:0; transform:scale(1.8);}}
+.tag-pop{position:absolute; bottom:22px; left:50%; transform:translateX(-50%); background:var(--ink); color:var(--bg); font-family:'Courier New',monospace; font-size:10px; letter-spacing:0.06em; text-transform:uppercase; padding:8px 10px; border-radius:2px; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .15s; z-index:5;}
+.node:hover .tag-pop, .node.active .tag-pop{opacity:1;}
+.tag-pop::after{content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%); border:5px solid transparent; border-top-color:var(--ink);}
+
+/* process */
+.process{display:flex; overflow-x:auto; gap:1px; background:var(--grid); border:1px solid var(--grid); margin-top:40px;}
+.step{min-width:180px; background:var(--bg); padding:24px 20px; flex:1;}
+.step .n{font-family:'Courier New',monospace; color:var(--red); font-size:11px;}
+.step h4{font-size:14px; margin:10px 0 8px;}
+.step p{font-size:12px; line-height:1.5; color:#333;}
+
+/* tags */
+.tag-row{display:flex; flex-wrap:wrap; gap:10px; margin-top:30px;}
+.tag{font-family:'Courier New',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.06em; border:1px solid var(--grid); padding:8px 14px; border-radius:16px;}
+
+/* relationship diagram */
+.rel{display:flex; align-items:center; gap:16px; margin-top:40px; flex-wrap:wrap;}
+.rel .box{border:1px solid var(--ink); padding:16px 20px; font-family:'Courier New',monospace; font-size:12px; text-transform:uppercase;}
+.rel .arrow{color:var(--red); font-size:18px;}
+
+/* faq */
+.faq-item{border-bottom:1px solid var(--grid); padding:20px 0; cursor:pointer;}
+.faq-q{display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:15px;}
+.faq-q .plus{font-family:'Courier New',monospace; color:var(--red);}
+.faq-a{max-height:0; overflow:hidden; transition:max-height .3s ease; font-size:13px; line-height:1.6; color:#333;}
+.faq-item.open .faq-a{max-height:200px; margin-top:12px;}
+
+/* form */
+form{margin-top:40px; display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+form .full{grid-column:1/-1;}
+label{font-family:'Courier New',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.06em; display:block; margin-bottom:6px;}
+label .req{color:var(--red);}
+input,select,textarea{width:100%; border:1px solid var(--grid); background:var(--bg); padding:12px; font-family:inherit; font-size:13px; border-radius:2px;}
+textarea{min-height:90px; resize:vertical;}
+@media (max-width:700px){ form{grid-template-columns:1fr;} }
+.confirm{display:none; border:1px solid var(--ink); padding:30px; margin-top:20px; text-align:center;}
+.confirm.show{display:block;}
+
+/* marquee */
+.marquee-wrap{border-top:1px solid var(--grid); border-bottom:1px solid var(--grid); overflow:hidden; padding:16px 0; background:var(--bg);}
+.marquee{display:flex; white-space:nowrap; animation:scroll 22s linear infinite; font-family:'Courier New',monospace; font-size:12px; letter-spacing:0.08em; text-transform:uppercase;}
+.marquee span{padding:0 20px;}
+.marquee span.dot{color:var(--red);}
+@keyframes scroll{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+
+footer{padding:60px 40px 40px; display:grid; grid-template-columns:repeat(5,1fr); gap:20px;}
+footer .f-label{font-family:'Courier New',monospace; font-size:11px; color:var(--red); margin-bottom:8px;}
+footer .f-val{font-size:13px;}
+@media (max-width:900px){ footer{grid-template-columns:1fr 1fr;} }
+</style>
+</head>
+
+
+<body>
+
+<nav id="nav">
+  <div class="brand-pill">JUST PANEL IT</div>
+  <div class="nav-links">
+    <a href="#how">HOW IT WORKS</a>
+    <a href="#fabrication">FABRICATION</a>
+    <a href="#capabilities">CAPABILITIES</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <a class="nav-cta" href="#quote">REQUEST A QUOTE →</a>
+</nav>
+
+<div class="wrap grid-border">
+
+<!-- HERO -->
+<section class="hero">
+  <h1>YOUR SHOP IS BUSY.<br>WE CAN TAKE FABRICATION<br>OFF YOUR PRODUCTION QUEUE.</h1>
+  <p class="sub">Trade-only backer panel and box fabrication for Ontario sign manufacturers. When your internal production capacity is stretched, outsource specific fabrication work while keeping the customer, design and installation in-house.</p>
+  <div class="ctas">
+    <a class="btn btn-solid" href="#quote">SEND US A PROJECT TO QUOTE →</a>
+    <a class="btn" href="#how">SEE HOW IT WORKS →</a>
+  </div>
+  <!-- <div class="meta-row mono">
+    <span>MARKET: ONTARIO</span>
+    <span>CUSTOMER: SIGN MANUFACTURERS</span>
+    <span>OUTPUT: BACKER PANELS + BOXES</span>
+    <span>MODEL: TRADE-ONLY</span>
+  </div> -->
+  <div class="value-module">
+    <h3>YOUR CUSTOMER STAYS<br>WITH YOU.</h3>
+    <p>Use outsourced fabrication when internal production becomes the bottleneck. Keep the project, customer relationship and installation in-house while we handle selected backer panel and box fabrication.</p>
+    <a class="btn" href="#capabilities">DISCOVER MORE →</a>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="section" id="problem">
+  <div class="section-label">01 / PRODUCTION PRESSURE</div>
+  <h2 style="font-size:clamp(24px,4vw,36px)">YOUR SHOP IS BUSY.<br>THAT'S A GOOD PROBLEM.</h2>
+  <p class="sub" style="margin-top:16px">The problem starts when fabrication becomes the part of production holding everything else up.</p>
+  <div class="mod-grid">
+    <div class="mod"><span class="num">01</span><h4>TOO MANY JOBS</h4><p>Multiple projects compete for the same fabrication capacity.</p></div>
+    <div class="mod"><span class="num">02</span><h4>FABRICATION BACKLOG</h4><p>Large or complex orders consume shop capacity.</p></div>
+    <div class="mod"><span class="num">03</span><h4>TIGHT DEADLINES</h4><p>Installation dates approach while fabrication remains in the queue.</p></div>
+    <div class="mod"><span class="num">04</span><h4>STAFFING PRESSURE</h4><p>Your team may not have enough fabrication capacity for every project.</p></div>
+    <div class="mod"><span class="num">05</span><h4>RUSH WORK</h4><p>Unexpected projects can disrupt an existing production schedule.</p></div>
+    <div class="mod"><span class="num">06</span><h4>LIMITED SHOP CAPACITY</h4><p>Additional work may require more labour, equipment or physical space.</p></div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section class="section" id="capabilities">
+  <div class="section-label">02 / PRODUCTION SUPPORT</div>
+  <h2 style="font-size:clamp(24px,4vw,36px)">OUTSOURCE THE FABRICATION.<br>KEEP THE CUSTOMER.</h2>
+  <p class="sub" style="margin-top:16px">When internal fabrication becomes constrained, send selected backer panel and box work to an external production partner. You maintain the customer relationship and project control. We handle the outsourced fabrication.</p>
+  <div class="mod-grid">
+    <div class="mod"><span class="num">01 — CAPACITY</span><p>Take on additional work without immediately adding another fabricator.</p></div>
+    <div class="mod"><span class="num">02 — DEADLINES</span><p>Move specific fabrication work outside your shop when production becomes the bottleneck.</p></div>
+    <div class="mod"><span class="num">03 — OVERHEAD</span><p>Use outsourced fabrication when needed instead of immediately adding permanent labour, equipment or facility space.</p></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="section-label">03 / WORKFLOW</div>
+  <h2 style="font-size:clamp(24px,4vw,36px)">A FABRICATION RESOURCE<br>WHEN YOUR SHOP NEEDS ONE.</h2>
+  <div class="process">
+    <div class="step"><span class="n">01</span><h4>PROJECT</h4><p>You identify fabrication work that needs to move outside your shop.</p></div>
+    <div class="step"><span class="n">02</span><h4>DRAWINGS / SPECS</h4><p>Provide the relevant project information required to quote and fabricate the work.</p></div>
+    <div class="step"><span class="n">03</span><h4>QUOTE</h4><p>We review the project and provide a fabrication quote.</p></div>
+    <div class="step"><span class="n">04</span><h4>FABRICATION</h4><p>The agreed backer panels or boxes move through production.</p></div>
+    <div class="step"><span class="n">05</span><h4>RETURN TO YOUR TEAM</h4><p>Completed fabrication moves back to your operation for the next stage.</p></div>
+    <div class="step"><span class="n">06</span><h4>YOU KEEP THE CUSTOMER</h4><p>Your company remains responsible for the customer relationship, project and installation.</p></div>
+  </div>
+</section>
+
+<!-- WHAT WE FABRICATE -->
+<section class="section" id="fabrication">
+  <div class="section-label">04 / FABRICATION</div>
+  <h2 style="font-size:clamp(24px,4vw,36px)">BACKER PANELS + BOXES<br>FOR SIGN MANUFACTURERS</h2>
+  <p class="sub" style="margin-top:16px">Trade-only fabrication designed to support sign shops when internal production capacity is constrained.</p>
+  <div class="two-col" style="margin-top:40px">
+    <svg viewBox="0 0 300 220" class="tech-svg" style="margin-top:0">
+      <rect x="30" y="20" width="240" height="160" fill="none" stroke="#0D0D0D" stroke-width="1.5"/>
+      <line x1="30" y1="10" x2="270" y2="10" stroke="#0D0D0D"/>
+      <text x="150" y="8" font-family="Courier New" font-size="9" text-anchor="middle">BACKER PANEL</text>
+      <circle cx="30" cy="20" r="3" fill="#FF2E00"/>
+      <circle cx="270" cy="180" r="3" fill="#FF2E00"/>
+    </svg>
+    <svg viewBox="0 0 300 220" class="tech-svg" style="margin-top:0">
+      <rect x="60" y="40" width="180" height="120" fill="none" stroke="#0D0D0D" stroke-width="1.5"/>
+      <rect x="80" y="60" width="140" height="80" fill="none" stroke="#0D0D0D" stroke-width="1" stroke-dasharray="3 2"/>
+      <text x="150" y="20" font-family="Courier New" font-size="9" text-anchor="middle">SIGN BOX</text>
+      <circle cx="60" cy="40" r="3" fill="#FF2E00"/>
+      <circle cx="240" cy="160" r="3" fill="#FF2E00"/>
+    </svg>
+  </div>
+</section>
+
+<!-- WHO -->
+<section class="section">
+  <div class="section-label">05 / TRADE CUSTOMERS</div>
+  <h2 style="font-size:clamp(24px,4vw,36px)">BUILT FOR ONTARIO<br>SIGN MANUFACTURERS.</h2>
+  <p class="sub" style="margin-top:16px">Ontario-based companies with internal production and fabrication operations.</p>
+  <div class="tag-row">
+    <span class="tag">Backlit signs</span><span class="tag">Illuminated cabinets</span><span class="tag">Sign boxes</span>
+    <span class="tag">Channel letters</span><span class="tag">Monument signs</span><span class="tag">Pylon signs</span>
+    <span class="tag">Storefront signs</span><span class="tag">Commercial building signage</span>
+    <span class="tag">Directional signage</span><span class="tag">Custom fabricated signs</span>
+    <span class="tag">Interior/exterior dimensional signage</span>
+  </div>
+</section>
+
+<!-- WHY OUTSOURCE -->
+<section class="section">
+  <div class="section-label">06 / CAPACITY</div>
+  <h2 style="font-size:clamp(24px,4vw,36px)">NOT EVERY JOB NEEDS<br>TO STAY IN YOUR SHOP.</h2>
+  <div class="mod-grid" style="grid-template-columns:1fr 1fr;">
+    <div class="mod"><h4>Production backlog</h4><p style="color:var(--red)">Outsource selected fabrication work.</p></div>
+    <div class="mod"><h4>Large project volume</h4><p style="color:var(--red)">Use external fabrication capacity for selected work.</p></div>
+    <div class="mod"><h4>Tight project deadline</h4><p style="color:var(--red)">Move a fabrication bottleneck outside your internal queue.</p></div>
+    <div class="mod"><h4>Limited fabrication staff</h4><p style="color:var(--red)">Use an external production resource when appropriate.</p></div>
+    <div class="mod"><h4>Shop capacity is constrained</h4><p style="color:var(--red)">Add production capacity through outsourced fabrication.</p></div>
+  </div>
+</section>
+
+<!-- TRADE ONLY -->
+<section class="section" style="background:var(--ink); color:var(--bg);">
+  <div class="section-label" style="color:var(--red)">07 / TRADE ONLY</div>
+  <h2 style="font-size:clamp(26px,4vw,40px)">YOU KEEP THE CUSTOMER.<br>WE HANDLE THE FABRICATION.</h2>
+  <p class="sub" style="color:#ccc; margin-top:16px">We work behind the sign manufacturer. Our role is to support your production operation, not compete for your customer.</p>
+  <div class="rel">
+    <div class="box" style="border-color:var(--bg)">YOUR CUSTOMER</div>
+    <span class="arrow">→</span>
+    <div class="box" style="border-color:var(--bg)">YOUR SIGN SHOP</div>
+    <span class="arrow">→</span>
+    <div class="box" style="border-color:var(--red); color:var(--red)">OUTSOURCED FABRICATION PARTNER</div>
+  </div>
+  <div class="mod-grid" style="background:#333; border-color:#333;">
+    <div class="mod" style="background:var(--ink); color:var(--bg)"><h4>CUSTOMER CONTROL</h4><p style="color:#ccc">You maintain the customer relationship.</p></div>
+    <div class="mod" style="background:var(--ink); color:var(--bg)"><h4>PROJECT CONTROL</h4><p style="color:#ccc">You maintain control of the project and installation.</p></div>
+    <div class="mod" style="background:var(--ink); color:var(--bg)"><h4>PRODUCTION SUPPORT</h4><p style="color:#ccc">We handle the outsourced fabrication you choose to send us.</p></div>
+  </div>
+</section>
+
+<!-- CAPACITY EXTENSION -->
+<section class="section">
+  <div class="section-label">08 / PRODUCTION CAPACITY</div>
+  <h2 style="font-size:clamp(24px,4vw,36px)">YOUR PRODUCTION CAPACITY, EXTENDED.</h2>
+  <p class="sub" style="margin-top:16px">When your shop is overloaded, outsourced fabrication can provide another production option without requiring an immediate expansion of your internal operation.</p>
+  <div class="mod-grid">
+    <div class="mod" style="text-align:center"><h4>INTERNAL CAPACITY</h4></div>
+    <div class="mod" style="text-align:center"><h4>OUTSOURCED FABRICATION</h4></div>
+    <div class="mod" style="text-align:center"><h4>ADDITIONAL PRODUCTION OPTION</h4></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+  <div class="section-label">09 / FAQ</div>
+  <h2 style="font-size:clamp(24px,4vw,36px)">PRODUCTION QUESTIONS</h2>
+  <div id="faqList" style="margin-top:30px">
+    <div class="faq-item"><div class="faq-q"><span>Who do you work with?</span><span class="plus">+</span></div><div class="faq-a">We provide trade-only backer panel and box fabrication for Ontario sign manufacturers.</div></div>
+    <div class="faq-item"><div class="faq-q"><span>Do you sell directly to end customers?</span><span class="plus">+</span></div><div class="faq-a">The service is structured as a trade-only production resource for sign manufacturers rather than a consumer-facing signage service.</div></div>
+    <div class="faq-item"><div class="faq-q"><span>Why would a sign shop outsource fabrication?</span><span class="plus">+</span></div><div class="faq-a">Outsourcing can provide an additional production option when internal fabrication capacity is constrained by workload, staffing, project volume or deadlines.</div></div>
+    <div class="faq-item"><div class="faq-q"><span>Do we keep the customer relationship?</span><span class="plus">+</span></div><div class="faq-a">Yes. The sign manufacturer keeps the customer, project and installation while selected fabrication work is outsourced.</div></div>
+    <div class="faq-item"><div class="faq-q"><span>Do we have to outsource our entire production operation?</span><span class="plus">+</span></div><div class="faq-a">No. The service is intended to supplement internal capacity. A sign shop can outsource specific fabrication work when it makes sense for a particular project or production period.</div></div>
+    <div class="faq-item"><div class="faq-q"><span>Can I submit a project for a quote?</span><span class="plus">+</span></div><div class="faq-a">Yes. Use the quote request form to provide the project information available to you.</div></div>
+    <div class="faq-item"><div class="faq-q"><span>What information should I provide?</span><span class="plus">+</span></div><div class="faq-a">Whatever relevant project information you currently have — drawings, specifications, quantities and project requirements.</div></div>
+  </div>
+</section>
+
+<!-- QUOTE FORM -->
+<section class="section" id="quote">
+
+  <div class="section-label">10 / REQUEST A QUOTE</div>
+
+  <h2 style="font-size:clamp(24px,4vw,36px)">
+    HAVE A PROJECT THAT<br>
+    NEEDS FABRICATION?
+  </h2>
+
+  <p class="sub" style="margin-top:16px">
+    Send us the details. We'll review the project and determine whether we can support the fabrication requirement.
+  </p>
+
+  <form id="quoteForm">
+
+    <div>
+      <label>Name <span class="req">*</span></label>
+      <input
+        type="text"
+        name="name"
+        required
+      >
+    </div>
+
+    <div>
+      <label>Company <span class="req">*</span></label>
+      <input
+        type="text"
+        name="company"
+        required
+      >
+    </div>
+
+    <div>
+      <label>Email <span class="req">*</span></label>
+      <input
+        type="email"
+        name="email"
+        required
+      >
+    </div>
+
+    <div>
+      <label>Phone</label>
+      <input
+        type="tel"
+        name="phone"
+      >
+    </div>
+
+    <div>
+      <label>City / Province</label>
+      <input
+        type="text"
+        name="city"
+      >
+    </div>
+
+    <div>
+      <label>Company website</label>
+      <input
+        type="url"
+        name="website"
+      >
+    </div>
+
+    <div>
+      <label>Project type</label>
+      <input
+        type="text"
+        name="projectType"
+      >
+    </div>
+
+    <div>
+      <label>What needs to be fabricated?</label>
+      <input
+        type="text"
+        name="fabrication"
+      >
+    </div>
+
+    <div>
+      <label>Approximate quantity</label>
+      <input
+        type="text"
+        name="quantity"
+      >
+    </div>
+
+    <div>
+      <label>Project timeline</label>
+      <input
+        type="text"
+        name="timeline"
+      >
+    </div>
+
+    <div class="full">
+      <label>Upload drawings/specifications</label>
+      <input
+        type="file"
+        id="file"
+        name="file"
+        accept=".pdf,.jpg,.jpeg,.png,.dwg,.dxf"
+      >
+    </div>
+
+    <div class="full">
+      <label>Additional project details</label>
+
+      <textarea
+        name="details"
+      ></textarea>
+    </div>
+
+    <div class="full">
+
+      <button
+        type="submit"
+        class="btn btn-solid"
+        id="submitButton"
+      >
+        REQUEST A FABRICATION QUOTE →
+      </button>
+
+    </div>
+
+  </form>
+
+  <div class="confirm" id="confirm">
+
+    <h3>PROJECT RECEIVED</h3>
+
+    <p style="margin-top:10px">
+      Thank you. Your fabrication request has been submitted for review.
+    </p>
+
+  </div>
+
+</section>
+
+<!-- FINAL CTA -->
+<section class="section" style="text-align:center;">
+  <div class="section-label" style="text-align:left">11 / NEXT PROJECT</div>
+  <h2 style="font-size:clamp(24px,5vw,44px); margin-top:20px;">WHEN FABRICATION BECOMES THE BOTTLENECK,<br>SEND US THE WORK.</h2>
+  <p class="sub" style="margin:20px auto 0; text-align:center;">Trade-only backer panel and box fabrication for Ontario sign manufacturers.</p>
+  <div class="ctas" style="justify-content:center; margin-top:30px;">
+    <a class="btn btn-solid" href="#quote">SEND US A PROJECT TO QUOTE →</a>
+    <a class="btn" href="#quote">TALK THROUGH YOUR NEXT PROJECT →</a>
+  </div>
+</section>
+
+<div class="marquee-wrap">
+  <div class="marquee">
+    <span>MORE CAPACITY</span><span class="dot">⋅</span><span>LESS PRODUCTION PRESSURE</span><span class="dot">⋅</span><span>KEEP PROJECTS MOVING</span><span class="dot">⋅</span><span>YOU KEEP THE CUSTOMER</span><span class="dot">⋅</span><span>WE HANDLE THE FABRICATION</span><span class="dot">⋅</span>
+    <span>MORE CAPACITY</span><span class="dot">⋅</span><span>LESS PRODUCTION PRESSURE</span><span class="dot">⋅</span><span>KEEP PROJECTS MOVING</span><span class="dot">⋅</span><span>YOU KEEP THE CUSTOMER</span><span class="dot">⋅</span><span>WE HANDLE THE FABRICATION</span><span class="dot">⋅</span>
+  </div>
+</div>
+
+<footer class="mono">
+  <div><div class="f-label">COMPANY</div><div class="f-val">JUST PANEL IT</div></div>
+  <div><div class="f-label">SERVICE</div><div class="f-val">TRADE-ONLY FABRICATION</div></div>
+  <div><div class="f-label">MARKET</div><div class="f-val">ONTARIO, CANADA</div></div>
+  <div><div class="f-label">FABRICATION</div><div class="f-val">BACKER PANELS + BOXES</div></div>
+  <div><a class="btn btn-solid" href="#quote">REQUEST A QUOTE →</a></div>
+</footer>
+
+</div>
+
+<script>
+window.addEventListener('scroll', function(){
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+document.querySelectorAll('#elevation .node').forEach(function(node){
+  node.addEventListener('click', function(e){
+    e.stopPropagation();
+
+    var wasActive = node.classList.contains('active');
+
+    document.querySelectorAll('#elevation .node').forEach(function(n){
+      n.classList.remove('active');
+    });
+
+    if(!wasActive) node.classList.add('active');
+  });
+});
+
+document.addEventListener('click', function(){
+  document.querySelectorAll('#elevation .node').forEach(function(n){
+    n.classList.remove('active');
+  });
+});
+
+document.querySelectorAll('.faq-item').forEach(function(item){
+  item.addEventListener('click', function(){
+    item.classList.toggle('open');
+  });
+});
+</script>
+<script>
+
+const SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbwgPF07je7ubrQWLJljtjlrqb7Q7sY6kdZ9xh3J5OtpubfXA4KJKBT4uICaiugLR7-n/exec";
+
+const quoteForm = document.getElementById("quoteForm");
+const submitButton = document.getElementById("submitButton");
+const confirmMessage = document.getElementById("confirm");
+
+quoteForm.addEventListener("submit", async function(event) {
+
+  event.preventDefault();
+
+  submitButton.disabled = true;
+  submitButton.textContent = "SUBMITTING...";
+
+  try {
+
+    const formData = new FormData(quoteForm);
+
+    const fileInput = document.getElementById("file");
+    const file = fileInput.files[0];
+
+    /*
+     * Convert uploaded file to Base64
+     */
+    if (file) {
+
+      const base64File = await fileToBase64(file);
+
+      formData.append(
+        "fileData",
+        base64File.split(",")[1]
+      );
+
+      formData.append(
+        "fileName",
+        file.name
+      );
+
+      formData.append(
+        "fileType",
+        file.type
+      );
+    }
+
+    /*
+     * Send information to Google Apps Script
+     */
+    await fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      body: new URLSearchParams(formData)
+    });
+
+    /*
+     * Show confirmation
+     */
+    quoteForm.style.display = "none";
+    confirmMessage.classList.add("show");
+
+  } catch (error) {
+
+    console.error("Quote submission error:", error);
+
+    alert(
+      "There was a problem submitting your request. Please try again."
+    );
+
+    submitButton.disabled = false;
+
+    submitButton.textContent =
+      "REQUEST A FABRICATION QUOTE →";
+  }
+
+});
+
+
+function fileToBase64(file) {
+
+  return new Promise(function(resolve, reject) {
+
+    const reader = new FileReader();
+
+    reader.onload = function() {
+      resolve(reader.result);
+    };
+
+    reader.onerror = function(error) {
+      reject(error);
+    };
+
+    reader.readAsDataURL(file);
+
+  });
+
+}
+
+</script>
+</body>
+</html>
